@@ -1,0 +1,261 @@
+DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="theme-color" content="#10110f">
+
+<title>LEVEL UP</title>
+
+<style>
+
+body{margin:0;background:#10110f;color:#f4f5ef;font:16px -apple-system,sans-serif;padding:20px 16px 90px}
+
+h1{font-size:32px}h2{font-size:21px}
+
+p{color:#a5a89e}
+
+.card{background:#1b1d19;border:1px solid #34372e;border-radius:18px;padding:16px;margin:14px 0}
+
+button,input{font:inherit;border-radius:12px;padding:12px;border:1px solid #383b32}
+
+button{background:#c8ff45;color:#151710;font-weight:bold}
+
+input{background:#10110f;color:white;width:90%;margin:8px 0}
+
+nav{position:fixed;bottom:0;left:0;right:0;background:#1b1d19;display:flex;justify-content:space-around;padding:12px 0}
+
+nav button{font-size:12px;padding:10px 7px}
+
+.page{display:none}.page.active{display:block}
+
+.lime{color:#c8ff45}.task{display:flex;gap:10px;align-items:center;margin:12px 0}
+
+.task button{min-width:45px}
+
+</style>
+
+</head>
+
+<body>
+
+<header><b>LEVEL <span class="lime">UP</span></b><span style="float:right">⚡ <b id="xp">0</b> XP</span></header>
+
+<section id="today" class="page active">
+
+<h1>Твой день.<br>Твой уровень.</h1>
+
+<div class="card">
+
+<p>ТВОЙ УРОВЕНЬ</p><h2 id="level">Уровень 1</h2>
+
+<p>🪙 Монеты: <b id="coins">0</b></p>
+
+<p id="count">Выполнено задач: 0</p>
+
+</div>
+
+<h2>Задачи на сегодня</h2>
+
+<div id="tasks" class="card"></div>
+
+</section>
+
+<section id="plan" class="page">
+
+<h1>План и цели</h1>
+
+<div class="card">
+
+<h2>Новая задача</h2>
+
+<input id="taskName" placeholder="Название задачи">
+
+<button onclick="addTask()">Добавить</button>
+
+</div>
+
+<div class="card"><h2>Мои цели</h2>
+
+<input id="goalName" placeholder="Например, заниматься спортом">
+
+<button onclick="addGoal()">Добавить цель</button>
+
+<div id="goals"></div></div>
+
+</section>
+
+<section id="character" class="page">
+
+<h1>Персонаж</h1>
+
+<div class="card" style="text-align:center">
+
+<div id="avatar" style="font-size:80px">🧑‍🚀</div>
+
+<h2 id="hero">Мой герой</h2>
+
+<button onclick="changeAvatar()">Сменить аватар</button>
+
+<p><input id="heroName" placeholder="Имя персонажа"></p>
+
+<button onclick="saveHero()">Сохранить имя</button>
+
+</div>
+
+</section>
+
+<section id="progress" class="page">
+
+<h1>Прогресс</h1>
+
+<div class="card"><h2>Твои результаты</h2>
+
+<p>Уровень: <b id="level2">1</b></p>
+
+<p>Всего XP: <b id="xp2">0</b></p>
+
+<p>Монеты: <b id="coins2">0</b></p>
+
+<p>Выполнено задач: <b id="count2">0</b></p>
+
+</div>
+
+</section>
+
+<nav>
+
+<button onclick="go('today')">☀️<br>Сегодня</button>
+
+<button onclick="go('plan')">📋<br>План</button>
+
+<button onclick="go('character')">🧑‍🚀<br>Персонаж</button>
+
+<button onclick="go('progress')">📈<br>Прогресс</button>
+
+</nav>
+
+<script>
+
+let xp=0,coins=0,done=0,avatar=0;
+
+let tasks=[
+
+{id:1,name:"Спланировать день",reward:10,done:false},
+
+{id:2,name:"30 минут движения",reward:20,done:false},
+
+{id:3,name:"Прочитать 10 страниц",reward:10,done:false}
+
+];
+
+let goals=[];
+
+function go(id){
+
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+document.getElementById(id).classList.add('active');
+
+render();
+
+}
+
+function addTask(){
+
+let el=document.getElementById('taskName'),name=el.value.trim();
+
+if(!name){alert('Введи название задачи');return}
+
+tasks.push({id:Date.now(),name,reward:10,done:false});
+
+el.value='';render();go('today');
+
+}
+
+function toggle(id){
+
+let t=tasks.find(t=>t.id===id);
+
+if(!t)return;
+
+t.done=!t.done;
+
+xp+=t.done?t.reward:-t.reward;
+
+coins+=t.done?1:-1;
+
+done+=t.done?1:-1;
+
+xp=Math.max(0,xp);coins=Math.max(0,coins);done=Math.max(0,done);
+
+render();
+
+}
+
+function addGoal(){
+
+let el=document.getElementById('goalName'),v=el.value.trim();
+
+if(!v)return;
+
+goals.push(v);el.value='';render();
+
+}
+
+function changeAvatar(){
+
+avatar=(avatar+1)%4;
+
+document.getElementById('avatar').textContent=['🧑‍🚀','🥷','🧙','🦸'][avatar];
+
+}
+
+function saveHero(){
+
+let v=document.getElementById('heroName').value.trim();
+
+if(v)document.getElementById('hero').textContent=v;
+
+}
+
+function render(){
+
+document.getElementById('xp').textContent=xp;
+
+document.getElementById('xp2').textContent=xp;
+
+document.getElementById('coins').textContent=coins;
+
+document.getElementById('coins2').textContent=coins;
+
+document.getElementById('level').textContent='Уровень '+(Math.floor(xp/100)+1);
+
+document.getElementById('level2').textContent=Math.floor(xp/100)+1;
+
+document.getElementById('count').textContent='Выполнено задач: '+done;
+
+document.getElementById('count2').textContent=done;
+
+document.getElementById('tasks').innerHTML=tasks.map(t=>
+
+'<div class="task"><button onclick="toggle('+t.id+')">'+(t.done?'✓':'○')+'</button><div>'+t.name+'<br><small class="lime">'+t.reward+' XP</small></div></div>'
+
+).join('');
+
+document.getElementById('goals').innerHTML=goals.map(g=>'<p>🎯 '+g+'</p>').join('');
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
